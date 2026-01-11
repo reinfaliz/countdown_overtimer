@@ -11,41 +11,43 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Install Qt 6
+    # 2. Install Qt 6 (Using MSVC 2019 64-bit instead of MinGW)
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.5.0'
         host: 'windows'
         target: 'desktop'
-        arch: 'win64_mingw'
+        arch: 'win64_msvc2019_64'
 
-    # 3. Build the project using CMake
+    # 3. Build the project using MSVC
+    # MSVC automatically creates a 'Release' subfolder for the output
     - name: Build
       run: |
         mkdir build
         cd build
-        cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+        cmake ..
         cmake --build . --config Release
 
-    # 4. Bundle required Qt DLLs so the app runs on your PC
-    # This runs 'windeployqt' which finds all the Qt files the .exe needs and copies them next to it.
+    # 4. Bundle required Qt DLLs
+    # We must point windeployqt to the 'Release' folder where MSVC put the .exe
     - name: Deploy (Bundle DLLs)
       shell: cmd
       run: |
-        cd build
+        cd build\Release
         windeployqt --release CountdownOvertimer.exe --no-translations --no-opengl-sw
 
-    # 5. Copy config and sound files to the build folder so they are in the zip
+    # 5. Copy config and sound files into the Release folder
     - name: Copy Assets
+      shell: cmd
       run: |
-        copy config.txt build/
-        if exist sound_zero.mp3 copy sound_zero.mp3 build/
-        if exist sound_limit.mp3 copy sound_limit.mp3 build/
+        copy config.txt build\Release\
+        if exist sound_zero.mp3 copy sound_zero.mp3 build\Release\
+        if exist sound_limit.mp3 copy sound_limit.mp3 build\Release\
 
-    # 6. Upload the result as a ZIP file
+    # 6. Upload the result (The Release folder)
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: NegativeTimer-App
-        path: build/
+        name: CountdownOvertimer-App
+        path: build/Release/
