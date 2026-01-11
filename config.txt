@@ -1,0 +1,17 @@
+# ===========================
+# TIMER CONFIGURATION
+# ===========================
+
+# --- Start Time ---
+40     # Start Minutes
+0     # Start Seconds
+
+# --- Stop Time ---
+# The timer will continue counting down until it reaches this negative value.
+# Example: 15 mins = -15:00
+15    # Stop Minutes
+0     # Stop Seconds
+
+# --- Audio Files ---
+sound_zero.mp3   # Plays at 00:00
+sound_limit.mp3  # Plays at Stop Time
