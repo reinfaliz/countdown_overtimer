@@ -19,6 +19,7 @@ jobs:
         host: 'windows'
         target: 'desktop'
         arch: 'win64_msvc2019_64'
+        modules: 'qtmultimedia'
 
     # 3. Build the project using MSVC
     # MSVC automatically creates a 'Release' subfolder for the output
